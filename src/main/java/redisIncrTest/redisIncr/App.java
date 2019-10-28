@@ -22,7 +22,7 @@ public class App implements CommandLineRunner{
 	//redis的键-key
 	private final static String KEY = "HSJ-QPS-INCR";
 	//线程池5个线程
-	private static ExecutorService  fixedPool3 = Executors.newFixedThreadPool(8);
+	private final static ExecutorService  fixedPool3 = Executors.newFixedThreadPool(8);
 	
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
