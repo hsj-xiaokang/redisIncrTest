@@ -33,5 +33,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+		
+         <!-- 阿里巴巴fastjson -->
+	     <dependency>
+		  <groupId>com.alibaba</groupId>
+		  <artifactId>fastjson</artifactId>
+		  <version>1.2.51</version>
+	     </dependency>
 	</dependencies>
 </project>
