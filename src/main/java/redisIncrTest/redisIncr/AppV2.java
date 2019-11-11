@@ -41,7 +41,7 @@ public class AppV2 implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		
 		//10个线程都去让他增加，总共1000002次
-		for(long i = 0;i < 1000002;i++){
+		for(long i = 0;i < 10002;i++){
 			FIXED_POOL3.execute(()->{
 				
 				synchronized(this.getClass()){//锁住类，不是实例 Runnable command
