@@ -1,15 +1,16 @@
-package distributed;
+package redisIncrTest.redisIncr;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
+
+
 
 /**
  * redis分布式锁-基于SETNX，「SET if Not eXists」
@@ -21,9 +22,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @SpringBootApplication
 public class AppV2 implements CommandLineRunner{
 	private final static Logger logger = Logger.getLogger(AppV2.class.getName());
-	
+//	@Autowired
+//    private RedisTemplate  redisTemplate;
 	@Autowired
-    private StringRedisTemplate  stringRedisTemplate;
+    private RedisOPSBean  redisOPSBean;
 	//redis的键-key
 	private final static String LOCKKEY = "HSJ-QPS-D";
 	private final static String LOCKKEY_VALUE = "1";
@@ -34,35 +36,34 @@ public class AppV2 implements CommandLineRunner{
 		SpringApplication.run(AppV2.class, args);
 	}
 
+
 	@Override
 	public void run(String... args) throws Exception {
 		
 		//10个线程都去让他增加，总共1000002次
-		for(long i = 0;i < 1002;i++){
+		for(long i = 0;i < 1000002;i++){
 			FIXED_POOL3.execute(()->{
 				
 				synchronized(this.getClass()){//锁住类，不是实例 Runnable command
 					//默认没有获取锁
 					boolean lock = false;
-					try{					
-						lock = stringRedisTemplate.opsForValue().setIfAbsent(LOCKKEY, LOCKKEY_VALUE);					
+					try{		
+						lock = redisOPSBean.setIfAbsent(LOCKKEY, LOCKKEY_VALUE, 1L);
+//						lock = redisTemplate.opsForValue().setIfAbsent(LOCKKEY, LOCKKEY_VALUE);					
 						if (lock) {
 							logger.info(String.format("==【%s】===AppV2获取到锁：%s===", Thread.currentThread().getName(),lock));
-							stringRedisTemplate.expire(LOCKKEY,1, TimeUnit.MINUTES); //成功设置过期时间- 在1s之后过期
+							//下单并且减少库存
+//							redisTemplate.expire(LOCKKEY,1, TimeUnit.MINUTES); //成功设置过期时间- 在1s之后过期
 						}else {
 //							logger.info("AppV2没有获取到锁，不执行任务!");
 						}
-					}finally{
-						if(lock){	
-							stringRedisTemplate.delete(LOCKKEY);
-//							logger.info("AppV2任务结束，释放锁!");		
-						}else{
-//							logger.info("AppV2没有获取到锁，无需释放锁!");
-						}
+					}catch(Exception e){
+						e.printStackTrace();
 					}
 				}
 				
-			});
+			 }			
+		   );
 		}
 	}
 	

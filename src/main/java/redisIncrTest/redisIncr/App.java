@@ -14,7 +14,7 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
  * redisTemplate测试 incr原子自增操作
  *
  */
-@SpringBootApplication
+/*@SpringBootApplication
 public class App implements CommandLineRunner{
 	
 	@Autowired
@@ -37,4 +37,4 @@ public class App implements CommandLineRunner{
 		}
 	}
 	
-}
+}*/
