@@ -19,52 +19,52 @@ import org.springframework.data.redis.core.RedisTemplate;
  * https://blog.csdn.net/wuzhiwei549/article/details/80692278
  *
  */
-@SpringBootApplication
-public class AppV2 implements CommandLineRunner{
-	private final static Logger logger = Logger.getLogger(AppV2.class.getName());
+//@SpringBootApplication
+//public class AppV2 implements CommandLineRunner{
+//	private final static Logger logger = Logger.getLogger(AppV2.class.getName());
+////	@Autowired
+////    private RedisTemplate  redisTemplate;
 //	@Autowired
-//    private RedisTemplate  redisTemplate;
-	@Autowired
-    private RedisOPSBean  redisOPSBean;
-	//redis的键-key
-	private final static String LOCKKEY = "HSJ-QPS-D";
-	private final static String LOCKKEY_VALUE = "1";
-	//线程池5个线程
-	private final static ExecutorService  FIXED_POOL3 = Executors.newFixedThreadPool(8);
-	
-	public static void main(String[] args) {
-		SpringApplication.run(AppV2.class, args);
-	}
-
-
-	@Override
-	public void run(String... args) throws Exception {
-		
-		//10个线程都去让他增加，总共1000002次
-		for(long i = 0;i < 10002;i++){
-			FIXED_POOL3.execute(()->{
-				
-				synchronized(this.getClass()){//锁住类，不是实例 Runnable command
-					//默认没有获取锁
-					boolean lock = false;
-					try{		
-						lock = redisOPSBean.setIfAbsent(LOCKKEY, LOCKKEY_VALUE, 1L);
-//						lock = redisTemplate.opsForValue().setIfAbsent(LOCKKEY, LOCKKEY_VALUE);					
-						if (lock) {
-							logger.info(String.format("==【%s】===AppV2获取到锁：%s===", Thread.currentThread().getName(),lock));
-							//下单并且减少库存
-//							redisTemplate.expire(LOCKKEY,1, TimeUnit.MINUTES); //成功设置过期时间- 在1s之后过期
-						}else {
-//							logger.info("AppV2没有获取到锁，不执行任务!");
-						}
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-				}
-				
-			 }			
-		   );
-		}
-	}
-	
-}
+//    private RedisOPSBean  redisOPSBean;
+//	//redis的键-key
+//	private final static String LOCKKEY = "HSJ-QPS-D";
+//	private final static String LOCKKEY_VALUE = "1";
+//	//线程池5个线程
+//	private final static ExecutorService  FIXED_POOL3 = Executors.newFixedThreadPool(8);
+//	
+//	public static void main(String[] args) {
+//		SpringApplication.run(AppV2.class, args);
+//	}
+//
+//
+//	@Override
+//	public void run(String... args) throws Exception {
+//		
+//		//10个线程都去让他增加，总共1000002次
+//		for(long i = 0;i < 10002;i++){
+//			FIXED_POOL3.execute(()->{
+//				
+//				synchronized(this.getClass()){//锁住类，不是实例 Runnable command
+//					//默认没有获取锁
+//					boolean lock = false;
+//					try{		
+//						lock = redisOPSBean.setIfAbsent(LOCKKEY, LOCKKEY_VALUE, 1L);
+////						lock = redisTemplate.opsForValue().setIfAbsent(LOCKKEY, LOCKKEY_VALUE);					
+//						if (lock) {
+//							logger.info(String.format("==【%s】===AppV2获取到锁：%s===", Thread.currentThread().getName(),lock));
+//							//下单并且减少库存
+////							redisTemplate.expire(LOCKKEY,1, TimeUnit.MINUTES); //成功设置过期时间- 在1s之后过期
+//						}else {
+////							logger.info("AppV2没有获取到锁，不执行任务!");
+//						}
+//					}catch(Exception e){
+//						e.printStackTrace();
+//					}
+//				}
+//				
+//			 }			
+//		   );
+//		}
+//	}
+//	
+//}
