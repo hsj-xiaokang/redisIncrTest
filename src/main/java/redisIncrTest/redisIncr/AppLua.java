@@ -38,21 +38,25 @@ public class AppLua implements CommandLineRunner{
     @Resource
 	private RedissonClient redissonClient;
 
-	public final static String KEY1 = "5";//"eval \"return redis.call('set',KEYS[1],500)\" 1 5";  //初始化KEY：5 ，VALUE:500
-	public final static String KEY1_VALUE = "500";
-	public final static String KEY2 = "10";//"eval \"return redis.call('set',KEYS[1],1000)\" 1 10";//初始化KEY：10 ，VALUE:1000
-	public final static String KEY2_VALUE = "1000";
+	public final static String KEY1 = "10";//"eval \"return redis.call('set',KEYS[1],1000)\" 1 10";  //初始化KEY：10 ，VALUE:1000
+	public final static String KEY1_VALUE = "1000";
+	public final static String KEY2 = "5";//"eval \"return redis.call('set',KEYS[1],500)\" 1 5";//初始化KEY：5 ，VALUE:500
+	public final static String KEY2_VALUE = "500";
 
 	public final static StringBuilder LUA =        new StringBuilder()
 			                                                  //.append(" eval \" ")
-    		                                                  .append(" local b = 1 ")//lua 的KEY下标从1开始
-    		                                                  .append(" while( tonumber(b) <= table.getn( ARGV) ) do ")
-    		                                                  .append("  if tonumber(redis.call('get',KEYS[b])) >= tonumber(ARGV[b]) ")//要减少的库存需要小于等于库存
-    		                                                  .append("    then redis.call('decrby' , KEYS[b],ARGV[b]) ")
-    		                                                  .append("  else return error('stock is over!') ")//没有库存
-    		                                                  .append(" end b = b + 1 ") //下标加1
-    		                                                  .append(" end return b-1 ");//表示执行成功的KEY数量
-    		                                                  //.append(" \" 2 5 10 1 1"); //2表示两个KEY，KEY：5 10，VALUE：1 1 --两个KEY每次减少都是1
+    		                                                  .append(" local i = 1 ")//lua 的KEY下标从1开始
+    		                                                  .append(" while( tonumber(i) <= table.getn( ARGV) ) do ")//校验库存
+    		                                                  .append("   if tonumber(ARGV[i]) > tonumber(redis.call('get',KEYS[i])) then return error('please notice here,stock is over!-----by goods stock.') end ")
+    		                                                  .append("   i = i + 1 ")
+    		                                                  .append(" end ")
+    		                                                  .append(" i= 1 ")//重置index从1开始，进行减库存操作
+    		                                                  .append(" while( tonumber(i) <= table.getn( ARGV) ) do ")
+    		                                                  .append(" redis.call('decrby' , KEYS[i],ARGV[i]) ")
+    		                                                  .append(" i = i + 1 ")
+    		                                                  .append(" end ")
+    		                                                  .append(" return i-1 ");//执行成功的个数
+    		                                                  //.append(" \" 2 10 5 1 1"); //2表示两个KEY，KEY：10 2，VALUE：1 1 --两个KEY每次减少都是1
 	//线程池10个线程
 	private final static ExecutorService  FIXED_POOL = Executors.newFixedThreadPool(10);
 	
