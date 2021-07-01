@@ -25,7 +25,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 		4) "secondValue"
  * 
  *  说明： redis lua 原子操作 可行
- *       redison分布式锁  原子操作 可行
+ *       redison分布式锁  原子操作 可行 （SETNX）
  *       不加锁 不具备原子操作 不可行
  *  @author:heshengjin qq:2356899074
  *  @date 2020年12月17日 上午11:14:48
@@ -100,7 +100,7 @@ public class AppLua implements CommandLineRunner{
 				
 				
 				//*******************************
-				//    redison分布式锁  原子操作 可行
+				//    redison分布式锁  原子操作 可行（SETNX）
 				//*******************************
 //	    		// 1.获取分布式锁
 //		        RLock lock = redissonClient.getLock("my:lock");
