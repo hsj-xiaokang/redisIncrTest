@@ -18,11 +18,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 /**
- * eval "return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}" 2 key1 key2 first second
+ * eval "return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}" 2 key1 key2 firstValue secondValue
 		1) "key1"
 		2) "key2"
-		3) "first"
-		4) "second"
+		3) "firstValue"
+		4) "secondValue"
  * 
  *  说明： redis lua 原子操作 可行
  *       redison分布式锁  原子操作 可行
@@ -56,7 +56,7 @@ public class AppLua implements CommandLineRunner{
     		                                                  .append(" i = i + 1 ")
     		                                                  .append(" end ")
     		                                                  .append(" return i-1 ");//执行成功的个数
-    		                                                  //.append(" \" 2 10 5 1 1"); //2表示两个KEY，KEY：10 2，VALUE：1 1 --两个KEY每次减少都是1
+    		                                                  //.append(" \" 2 10 5 1 1"); //2表示两个KEY，KEY：10 5，VALUE：1 1 --两个KEY每次减少都是1
 	//线程池10个线程
 	private final static ExecutorService  FIXED_POOL = Executors.newFixedThreadPool(10);
 	
